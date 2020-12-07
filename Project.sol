@@ -1,10 +1,10 @@
 pragma solidity 0.5.1;
 
 contract genesis {
-    uint iteral = 0;
+    uint public iteral  = 0;
     address[] Admins;
     struct Diploms {string name; string surname; uint year; string link; string CRC; uint id;}
-    mapping (uint => Diploms) Work;
+    mapping (uint => Diploms) public Work;
     modifier only_Admins{
         require (checkStatus());
         _;
@@ -14,20 +14,27 @@ contract genesis {
         Admins.push(msg.sender);
     }
     
-    function upload (string memory name, string memory surname,uint year,string memory link,string memory CRC) public{
+    function upload (string memory name, string memory surname,uint year,string memory link,string memory CRC) public {
         uint id = uint(keccak256(abi.encodePacked(name, surname, year)));
         for (uint i = 0; i <= iteral; i++){
+            if (iteral == 0) {
+                Work[iteral] = Diploms(name, surname, year, link, CRC, id);
+                break;
+            }
             if (Work[i].id == id) {
-                if (checkStatus()) Work[i] = Diploms(name, surname, year, link, CRC, id);
-            else {
-                if (!checkStatus()) {
-                    if (i == iteral) Work[iteral] = Diploms(name, surname, year, link, CRC, id);
+                if (checkStatus()) {
+                    Work[i] = Diploms(name, surname, year, link, CRC, id);
+                    iteral ++;
+                    break;
                 }
-            }}
+            }
+            else {
+                if (i == iteral) Work[iteral] = Diploms(name, surname, year, link, CRC, id);
+            }
         }
         iteral ++;
     }
-    
+    // НАДО ПЕРЕДЕЛАТЬ ФУНКЦИЮ ТАК КАК ИЩЕТ НЕ ПРАВИЛЬНО
     function check (string memory CRC) public view returns (string memory, string memory, uint, string memory) {
         for (uint i = 0; i <= iteral; i++){
             if (keccak256(bytes(Work[i].CRC)) == keccak256(bytes(CRC))) return (Work[i].name, Work[i].surname, Work[i].year, Work[i].link);
