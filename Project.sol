@@ -19,21 +19,26 @@ contract genesis {
         for (uint i = 0; i <= iteral; i++){
             if (iteral == 0) {
                 Work[iteral] = Diploms(name, surname, year, link, CRC, id);
+                iteral ++;
                 break;
             }
             if (Work[i].id == id) {
                 if (checkStatus()) {
                     Work[i] = Diploms(name, surname, year, link, CRC, id);
+                    break;
+                }
+                else break;
+            }
+            else {
+                if (i == iteral) {
+                    Work[iteral] = Diploms(name, surname, year, link, CRC, id);
                     iteral ++;
                     break;
                 }
             }
-            else {
-                if (i == iteral) Work[iteral] = Diploms(name, surname, year, link, CRC, id);
-            }
         }
-        iteral ++;
     }
+    
     // НАДО ПЕРЕДЕЛАТЬ ФУНКЦИЮ ТАК КАК ИЩЕТ НЕ ПРАВИЛЬНО
     function check (string memory CRC) public view returns (string memory, string memory, uint, string memory) {
         for (uint i = 0; i <= iteral; i++){
@@ -55,6 +60,11 @@ contract genesis {
     
     function getStatus (address _address) public view returns(string memory) {
         if (checkStatus(_address)) return "Admin";
+        else return "User";
+    }
+    
+    function getStatus () public view returns(string memory) {
+        if (checkStatus()) return "Admin";
         else return "User";
     }
     
